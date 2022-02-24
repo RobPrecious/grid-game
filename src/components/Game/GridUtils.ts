@@ -1,7 +1,7 @@
 import { GridItem } from './GameTypes'
 
 const generateGrid = (size: number): GridItem[] => {
-    const baseGrid = Array.from(Array(size * 2)).map(
+    const baseGrid = Array.from(Array(size)).map(
         (_, index): GridItem => ({
             letter: String.fromCharCode(65 + index),
             found: false,
