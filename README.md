@@ -1,3 +1,11 @@
-# vitejs-vite-wi9s7v
+Install node v16.13.1 (node -v)
 
-[Edit on StackBlitz ⚡️](https://stackblitz.com/edit/vitejs-vite-wi9s7v)
+git clone https://github.com/RobPrecious/grid-game.git
+
+Open in vscode
+
+run ``` npm i ```
+
+run ``` npm run dev ```
+
+Go to http://localhost:3000
