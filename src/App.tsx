@@ -1,10 +1,8 @@
-import { useState } from 'react'
-import logo from './logo.svg'
 import './App.css'
-import Game from './components/Game/Game'
+import GameScreen from './components/GameScreen/GameScreen'
 
 function App() {
-    return <Game />
+    return <GameScreen />
 }
 
 export default App

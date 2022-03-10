@@ -1,5 +1,5 @@
 import React from 'react'
-import { GridItem } from './GameTypes'
+import { GameState, GridItem, initialGame } from './GameTypes'
 import { generateGrid } from './GridUtils'
 import styled, { css } from 'styled-components'
 
@@ -10,7 +10,7 @@ const StyledGrid = styled.div`
     gap: 10px;
     width: 300px;
 `
-const StyledGridItem = styled.button`
+const StyledGridItem = styled.button<{ show: boolean }>`
     padding: 8px;
     border: 1px solid lightgray;
     height: 60px;
@@ -28,12 +28,27 @@ const StyledGridItem = styled.button`
             background: lightgreen;
         `}
 `
+interface GameProps {
+    playerName: string
+    saveGame: (game: GameState) => void
+}
 
-function Game() {
-    const [grid, setGrid] = React.useState<GridItem[]>(generateGrid(8))
+const Game = (props: GameProps) => {
+    const [game, setGame] = React.useState<GameState>(initialGame)
+    const [grid, setGrid] = React.useState<GridItem[]>(generateGrid(1))
     const [firstReveal, setFirstReveal] = React.useState<number | null>(null)
     const [secondReveal, setSecondReveal] = React.useState<number | null>(null)
-    console.log(grid)
+
+    console.log(game)
+
+    const reset = () => {
+        setGrid(generateGrid(1))
+        setGame({
+            ...initialGame,
+            startTime: new Date(),
+            playerName: props.playerName,
+        })
+    }
 
     const handleGridItemClick = (index: number) => {
         if (firstReveal === null) {
@@ -47,6 +62,21 @@ function Game() {
                 newGrid[index].found = true
                 setGrid(newGrid)
             }
+            //check if game over
+            const gameOver = grid.filter((item) => !item.found).length === 0
+            if (gameOver) {
+                props.saveGame({
+                    ...game,
+                    numberOfTurns: game.numberOfTurns + 1,
+                    playerName: props.playerName,
+                    endTime: new Date(),
+                })
+                reset()
+            } else {
+                const newGame = { ...game }
+                newGame.numberOfTurns++
+                setGame(newGame)
+            }
             setTimeout(() => {
                 setFirstReveal(null)
                 setSecondReveal(null)
@@ -56,22 +86,26 @@ function Game() {
     }
 
     return (
-        <StyledGrid>
-            {grid.map((gridItem, index) => {
-                const show =
-                    gridItem.found ||
-                    firstReveal === index ||
-                    secondReveal === index
-                return (
-                    <StyledGridItem
-                        show={show}
-                        onClick={() => handleGridItemClick(index)}
-                    >
-                        {show && gridItem.letter}
-                    </StyledGridItem>
-                )
-            })}
-        </StyledGrid>
+        <div>
+            <StyledGrid>
+                {grid.map((gridItem, index) => {
+                    const show =
+                        gridItem.found ||
+                        firstReveal === index ||
+                        secondReveal === index
+                    return (
+                        <StyledGridItem
+                            key={index}
+                            show={show}
+                            onClick={() => handleGridItemClick(index)}
+                        >
+                            {show && gridItem.letter}
+                        </StyledGridItem>
+                    )
+                })}
+            </StyledGrid>
+            <p>{game.numberOfTurns} turns</p>
+        </div>
     )
 }
 
